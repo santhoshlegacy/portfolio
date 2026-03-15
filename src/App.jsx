@@ -1,0 +1,298 @@
+import React, { useState, useEffect } from 'react';
+import GlowyWavesHero from "./components/GlowyWavesHero";
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { Code2, Cpu, Mail, Github, Linkedin, ChevronRight, ShieldCheck, Youtube, Instagram, User, Globe, Lock } from 'lucide-react';
+
+// --- 1. THE 3D TILT CARD (Immersive Depth Engine) ---
+const TiltCard = ({ children, className = "" }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    x.set(mouseX / width - 0.5);
+    y.set(mouseY / height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateY, rotateX, transformStyle: "preserve-3d" }}
+      className={`relative perspective-1000 ${className}`}
+    >
+      <div 
+        className="absolute inset-0 bg-gradient-to-br from-neonBlue/10 to-neonPurple/10 rounded-2xl opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ transform: "translateZ(30px)" }}
+      />
+      {children}
+    </motion.div>
+  );
+};
+
+// --- 2. UPGRADED STANDARD GLASS BOX (Ultra-Smooth Hover Added) ---
+const GlassCard = ({ children, className = "" }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    // Added hover:-translate-y-2 and ease-out for a buttery smooth floating effect
+    className={`group bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-2xl p-8 hover:-translate-y-2 hover:border-neonPurple/50 hover:shadow-[0_15px_40px_rgba(188,19,254,0.15)] hover:bg-gradient-to-br hover:from-white/[0.04] hover:to-neonPurple/[0.08] transition-all duration-500 ease-out relative overflow-hidden ${className}`}
+  >
+    <div className="absolute inset-0 bg-gradient-to-tr from-neonBlue/5 via-transparent to-neonPurple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neonBlue to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    {children}
+  </motion.div>
+);
+
+// --- MAIN APP ---
+export default function App() {
+  const [securityAnswer, setSecurityAnswer] = useState("");
+  const isHumanVerified = securityAnswer === "5";
+
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth';
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
+  }, []);
+
+  return (
+    <div className="bg-dark min-h-screen text-slate font-sans selection:bg-neonPurple selection:text-white relative overflow-x-hidden">
+      
+      {/* HIGH-TECH GRID BACKGROUND */}
+      <div className="fixed inset-0 bg-tech-grid bg-[size:40px_40px] pointer-events-none z-0 opacity-50" />
+      
+      <motion.div 
+        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-neonBlue/10 blur-[150px] rounded-full pointer-events-none z-0" 
+      />
+      <motion.div 
+        animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-neonPurple/10 blur-[150px] rounded-full pointer-events-none z-0" 
+      />
+
+      <main className="relative z-10">
+        
+        {/* --- HERO SECTION --- */}
+        <GlowyWavesHero />
+
+        {/* --- 3D ABOUT ME SECTION --- */}
+        <section className="max-w-6xl mx-auto px-6 py-20">
+          <div className="flex items-center gap-3 mb-10">
+            <User className="text-neonPurple" size={28} />
+            <h2 className="text-3xl font-bold text-white uppercase tracking-widest">Identity Record</h2>
+          </div>
+
+          <TiltCard className="w-full">
+            <div className="group bg-black/40 backdrop-blur-xl border border-white/10 hover:-translate-y-2 hover:border-neonBlue/50 hover:shadow-[0_15px_40px_rgba(0,242,255,0.15)] rounded-3xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row gap-10 items-center overflow-hidden transition-all duration-500 ease-out relative">
+              <div className="absolute inset-0 bg-gradient-to-tr from-neonBlue/10 via-transparent to-neonPurple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+              <div 
+                className="w-48 h-48 rounded-full border-2 border-neonPurple/50 p-2 shrink-0 relative z-10"
+                style={{ transform: "translateZ(50px)" }}
+              >
+                <div className="absolute inset-0 rounded-full border border-neonBlue animate-[spin_10s_linear_infinite]" />
+                <img src="/avatar.jpg" alt="Profile" className="w-full h-full rounded-full object-cover bg-white/5" />
+              </div>
+
+              <div style={{ transform: "translateZ(40px)" }} className="flex-1 text-center md:text-left z-10 relative">
+                <h3 className="text-4xl font-black text-white mb-2 tracking-tight">Website Developer <span className="text-neonBlue">&</span> Designer</h3>
+                <p className="text-neonPurple font-mono text-sm uppercase tracking-widest mb-6">Independent Freelancer</p>
+                <p className="text-slate leading-relaxed mb-8">
+                  I engineer immersive, high-performance digital experiences. Specializing in highly scalable architectures and ultra-modern UI/UX designs, I transform complex technical requirements into seamless, visually stunning interfaces. Whether it's a sleek landing page or a full-scale web application, I build for the future.
+                </p>
+
+                <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                  {[
+                    { icon: <Mail size={20} />, link: "mailto:santhoshthamodharan2008@gmail.com", label: "Comm Link" },
+                    { icon: <Github size={20} />, link: "https://github.com/your-username", label: "GitHub" },
+                    { icon: <Linkedin size={20} />, link: "https://linkedin.com/in/your-username", label: "LinkedIn" },
+                    { icon: <Youtube size={20} />, link: "https://youtube.com/@ryzor.amv", label: "YouTube" },
+                    { icon: <Instagram size={20} />, link: "https://instagram.com/snths.legacy", label: "Instagram" }
+                  ].map((social, idx) => (
+                    <a 
+                      key={idx}
+                      href={social.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 bg-white/5 hover:bg-neonBlue/10 hover:-translate-y-1 border border-white/5 hover:border-neonBlue/50 text-slate hover:text-neonBlue px-4 py-2 rounded-lg transition-all duration-300 ease-out font-mono text-xs uppercase relative z-20"
+                    >
+                      {social.icon} {social.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </TiltCard>
+        </section>
+
+        {/* --- BENTO GRID (Projects & Skills) --- */}
+        <section id="projects" className="max-w-6xl mx-auto px-6 py-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            {/* Core Capabilities */}
+            <GlassCard className="lg:col-span-2">
+              <Code2 className="text-neonBlue mb-4" size={32} />
+              <h3 className="font-bold text-white mb-4 uppercase tracking-widest text-sm">Core Capabilities</h3>
+              <div className="flex flex-wrap gap-2 relative z-10">
+                {['React', 'Next.js', 'Tailwind CSS', 'Framer Motion', 'JavaScript', 'Firebase'].map(item => (
+                  <span key={item} className="text-xs border border-neonBlue/20 bg-neonBlue/5 text-neonBlue hover:bg-neonBlue/20 hover:text-white transition-colors duration-300 px-3 py-1.5 rounded-md font-mono cursor-default">{item}</span>
+                ))}
+              </div>
+            </GlassCard>
+
+            {/* CityPulse Project */}
+            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
+              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold text-white">CityPulse</h3>
+                  <p className="text-xs font-mono text-neonPurple mt-1">Full-Stack Application</p>
+                </div>
+              </div>
+              <div className="mt-auto px-4 pb-4 relative z-10">
+                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
+                  <img src="/citypulse.jpg" alt="CityPulse" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
+                </div>
+              </div>
+            </GlassCard>
+
+            {/* Nexus AI Project */}
+            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
+              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold text-white">Nexus AI</h3>
+                  <p className="text-xs font-mono text-neonBlue mt-1">Neural Interface SaaS</p>
+                </div>
+              </div>
+              <div className="mt-auto px-4 pb-4 relative z-10">
+                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonBlue/50 transition-colors duration-500 ease-out">
+                  <img src="/nexus.jpg" alt="Nexus AI Dashboard" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
+                </div>
+              </div>
+            </GlassCard>
+
+            {/* AeroGear Project */}
+            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
+              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold text-white">AeroGear</h3>
+                  <p className="text-xs font-mono text-neonPurple mt-1">Cyberpunk E-Commerce</p>
+                </div>
+              </div>
+              <div className="mt-auto px-4 pb-4 relative z-10">
+                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
+                  <img src="/aerogear.jpg" alt="AeroGear Storefront" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
+                </div>
+              </div>
+            </GlassCard>
+
+          </div>
+        </section>
+
+        {/* --- SECURE CONTACT FORM --- */}
+        <section id="contact" className="max-w-3xl mx-auto px-6 py-20">
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <ShieldCheck className="text-neonBlue" size={24} />
+            <h2 className="text-2xl font-bold text-white uppercase tracking-widest">Initiate Project</h2>
+          </div>
+          
+          <GlassCard className="p-8 md:p-10 relative">
+            <form action="https://api.web3forms.com/submit" method="POST" className="flex flex-col gap-6 relative z-10">
+              
+              <input type="hidden" name="access_key" value="a0e93df5-1a65-48e3-82c2-a7da166f70f1" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2">
+                  <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Client Name</label>
+                  <input 
+                    type="text" 
+                    name="name" 
+                    required 
+                    maxLength="50"
+                    pattern="^[a-zA-Z\s]+$"
+                    title="Please enter a valid name (letters and spaces only)."
+                    // Added hover states and ease-out transitions to inputs
+                    className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" 
+                    placeholder="Enter designator..." 
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Comm Link (Email)</label>
+                  <input 
+                    type="email" 
+                    name="email" 
+                    required 
+                    maxLength="100"
+                    className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" 
+                    placeholder="Enter address..." 
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Transmission Data</label>
+                <textarea 
+                  name="message" 
+                  required 
+                  maxLength="1000"
+                  rows="4" 
+                  className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out resize-none font-mono text-sm" 
+                  placeholder="Describe your freelance project..."
+                ></textarea>
+              </div>
+
+              <div className="flex flex-col gap-2 border-t border-white/10 pt-6 mt-2">
+                <label className="text-neonPurple flex items-center gap-2 text-xs font-mono uppercase tracking-widest">
+                  <Lock size={14} /> Security Override: 2 + 3 = ?
+                </label>
+                <input 
+                  type="text" 
+                  value={securityAnswer}
+                  onChange={(e) => setSecurityAnswer(e.target.value)}
+                  className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonPurple/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm w-full md:w-1/2" 
+                  placeholder="Enter verification code..." 
+                />
+              </div>
+
+              <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
+
+              <button 
+                type="submit" 
+                disabled={!isHumanVerified}
+                className={`mt-4 px-8 py-4 font-bold rounded-lg transition-all duration-300 ease-out uppercase tracking-widest text-sm w-full md:w-auto self-end flex justify-center items-center gap-2 ${
+                  isHumanVerified 
+                  ? 'bg-neonPurple text-white hover:shadow-[0_0_20px_rgba(188,19,254,0.4)] hover:-translate-y-1' 
+                  : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                {isHumanVerified ? "Transmit Payload" : "System Locked"}
+              </button>
+            </form>
+          </GlassCard>
+        </section>
+
+      </main>
+    </div>
+  );
+}
