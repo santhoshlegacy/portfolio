@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/santhoshlegacy/portfolio/', // REPLACE 'your-repo-name' with your actual GitHub repo name
+  base: '/portfolio/', // REPLACE 'your-repo-name' with your actual GitHub repo name
 })
