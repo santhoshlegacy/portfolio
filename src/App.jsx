@@ -49,7 +49,6 @@ const GlassCard = ({ children, className = "" }) => (
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    // Added hover:-translate-y-2 and ease-out for a buttery smooth floating effect
     className={`group bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-2xl p-8 hover:-translate-y-2 hover:border-neonPurple/50 hover:shadow-[0_15px_40px_rgba(188,19,254,0.15)] hover:bg-gradient-to-br hover:from-white/[0.04] hover:to-neonPurple/[0.08] transition-all duration-500 ease-out relative overflow-hidden ${className}`}
   >
     <div className="absolute inset-0 bg-gradient-to-tr from-neonBlue/5 via-transparent to-neonPurple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
@@ -108,7 +107,8 @@ export default function App() {
                 style={{ transform: "translateZ(50px)" }}
               >
                 <div className="absolute inset-0 rounded-full border border-neonBlue animate-[spin_10s_linear_infinite]" />
-                <img src="/avatar.jpg" alt="Profile" className="w-full h-full rounded-full object-cover bg-white/5" />
+                {/* 🔴 AVATAR IMAGE FIXED HERE 🔴 */}
+                <img src={`${import.meta.env.BASE_URL}avatar.jpg`} alt="Profile" className="w-full h-full rounded-full object-cover bg-white/5" />
               </div>
 
               <div style={{ transform: "translateZ(40px)" }} className="flex-1 text-center md:text-left z-10 relative">
@@ -140,11 +140,6 @@ export default function App() {
               </div>
 
             </div>
-            <img 
-  src={`${import.meta.env.BASE_URL}avatar.jpg`} 
-  alt="Profile" 
-  className="w-full h-full rounded-full object-cover bg-white/5" 
-/>
           </TiltCard>
         </section>
 
@@ -163,54 +158,56 @@ export default function App() {
               </div>
             </GlassCard>
 
-           {/* CityPulse Project */}
-<GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
-  <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
-    <div>
-      <h3 className="text-xl font-bold text-white">CityPulse</h3>
-      <p className="text-xs font-mono text-neonPurple mt-1">Full-Stack Application</p>
-    </div>
-  </div>
-  <div className="mt-auto px-4 pb-4 relative z-10">
-    <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
-      {/* import.meta.env.BASE_URL ensures the path works on GitHub Pages */}
-      <img src={`${import.meta.env.BASE_URL}citypulse.jpg`} alt="CityPulse" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
-      <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
-    </div>
-  </div>
-</GlassCard>
+            {/* CityPulse Project */}
+            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
+              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold text-white">CityPulse</h3>
+                  <p className="text-xs font-mono text-neonPurple mt-1">Full-Stack Application</p>
+                </div>
+              </div>
+              <div className="mt-auto px-4 pb-4 relative z-10">
+                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
+                  {/* 🔴 CITYPULSE IMAGE FIXED HERE 🔴 */}
+                  <img src={`${import.meta.env.BASE_URL}citypulse.jpg`} alt="CityPulse" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
+                </div>
+              </div>
+            </GlassCard>
 
-{/* Nexus AI Project */}
-<GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
-  <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
-    <div>
-      <h3 className="text-xl font-bold text-white">Nexus AI</h3>
-      <p className="text-xs font-mono text-neonBlue mt-1">Neural Interface SaaS</p>
-    </div>
-  </div>
-  <div className="mt-auto px-4 pb-4 relative z-10">
-    <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonBlue/50 transition-colors duration-500 ease-out">
-      <img src={`${import.meta.env.BASE_URL}nexus.jpg`} alt="Nexus AI Dashboard" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
-      <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
-    </div>
-  </div>
-</GlassCard>
+            {/* Nexus AI Project */}
+            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
+              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold text-white">Nexus AI</h3>
+                  <p className="text-xs font-mono text-neonBlue mt-1">Neural Interface SaaS</p>
+                </div>
+              </div>
+              <div className="mt-auto px-4 pb-4 relative z-10">
+                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonBlue/50 transition-colors duration-500 ease-out">
+                  {/* 🔴 NEXUS IMAGE FIXED HERE 🔴 */}
+                  <img src={`${import.meta.env.BASE_URL}nexus.jpg`} alt="Nexus AI Dashboard" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
+                </div>
+              </div>
+            </GlassCard>
 
-{/* AeroGear Project */}
-<GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
-  <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
-    <div>
-      <h3 className="text-xl font-bold text-white">AeroGear</h3>
-      <p className="text-xs font-mono text-neonPurple mt-1">Cyberpunk E-Commerce</p>
-    </div>
-  </div>
-  <div className="mt-auto px-4 pb-4 relative z-10">
-    <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
-      <img src={`${import.meta.env.BASE_URL}aerogear.jpg`} alt="AeroGear Storefront" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
-      <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
-    </div>
-  </div>
-</GlassCard>
+            {/* AeroGear Project */}
+            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
+              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold text-white">AeroGear</h3>
+                  <p className="text-xs font-mono text-neonPurple mt-1">Cyberpunk E-Commerce</p>
+                </div>
+              </div>
+              <div className="mt-auto px-4 pb-4 relative z-10">
+                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
+                  {/* 🔴 AEROGEAR IMAGE FIXED HERE 🔴 */}
+                  <img src={`${import.meta.env.BASE_URL}aerogear.jpg`} alt="AeroGear Storefront" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
+                </div>
+              </div>
+            </GlassCard>
 
           </div>
         </section>
@@ -237,7 +234,6 @@ export default function App() {
                     maxLength="50"
                     pattern="^[a-zA-Z\s]+$"
                     title="Please enter a valid name (letters and spaces only)."
-                    // Added hover states and ease-out transitions to inputs
                     className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" 
                     placeholder="Enter designator..." 
                   />
