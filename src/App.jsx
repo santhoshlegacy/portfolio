@@ -140,6 +140,11 @@ export default function App() {
               </div>
 
             </div>
+            <img 
+  src={`${import.meta.env.BASE_URL}avatar.jpg`} 
+  alt="Profile" 
+  className="w-full h-full rounded-full object-cover bg-white/5" 
+/>
           </TiltCard>
         </section>
 
@@ -158,53 +163,54 @@ export default function App() {
               </div>
             </GlassCard>
 
-            {/* CityPulse Project */}
-            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
-              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold text-white">CityPulse</h3>
-                  <p className="text-xs font-mono text-neonPurple mt-1">Full-Stack Application</p>
-                </div>
-              </div>
-              <div className="mt-auto px-4 pb-4 relative z-10">
-                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
-                  <img src="/citypulse.jpg" alt="CityPulse" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
-                </div>
-              </div>
-            </GlassCard>
+           {/* CityPulse Project */}
+<GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
+  <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
+    <div>
+      <h3 className="text-xl font-bold text-white">CityPulse</h3>
+      <p className="text-xs font-mono text-neonPurple mt-1">Full-Stack Application</p>
+    </div>
+  </div>
+  <div className="mt-auto px-4 pb-4 relative z-10">
+    <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
+      {/* import.meta.env.BASE_URL ensures the path works on GitHub Pages */}
+      <img src={`${import.meta.env.BASE_URL}citypulse.jpg`} alt="CityPulse" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
+      <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
+    </div>
+  </div>
+</GlassCard>
 
-            {/* Nexus AI Project */}
-            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
-              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold text-white">Nexus AI</h3>
-                  <p className="text-xs font-mono text-neonBlue mt-1">Neural Interface SaaS</p>
-                </div>
-              </div>
-              <div className="mt-auto px-4 pb-4 relative z-10">
-                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonBlue/50 transition-colors duration-500 ease-out">
-                  <img src="/nexus.jpg" alt="Nexus AI Dashboard" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
-                </div>
-              </div>
-            </GlassCard>
+{/* Nexus AI Project */}
+<GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
+  <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
+    <div>
+      <h3 className="text-xl font-bold text-white">Nexus AI</h3>
+      <p className="text-xs font-mono text-neonBlue mt-1">Neural Interface SaaS</p>
+    </div>
+  </div>
+  <div className="mt-auto px-4 pb-4 relative z-10">
+    <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonBlue/50 transition-colors duration-500 ease-out">
+      <img src={`${import.meta.env.BASE_URL}nexus.jpg`} alt="Nexus AI Dashboard" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
+      <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
+    </div>
+  </div>
+</GlassCard>
 
-            {/* AeroGear Project */}
-            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
-              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold text-white">AeroGear</h3>
-                  <p className="text-xs font-mono text-neonPurple mt-1">Cyberpunk E-Commerce</p>
-                </div>
-              </div>
-              <div className="mt-auto px-4 pb-4 relative z-10">
-                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
-                  <img src="/aerogear.jpg" alt="AeroGear Storefront" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
-                </div>
-              </div>
-            </GlassCard>
+{/* AeroGear Project */}
+<GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
+  <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
+    <div>
+      <h3 className="text-xl font-bold text-white">AeroGear</h3>
+      <p className="text-xs font-mono text-neonPurple mt-1">Cyberpunk E-Commerce</p>
+    </div>
+  </div>
+  <div className="mt-auto px-4 pb-4 relative z-10">
+    <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
+      <img src={`${import.meta.env.BASE_URL}aerogear.jpg`} alt="AeroGear Storefront" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
+      <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
+    </div>
+  </div>
+</GlassCard>
 
           </div>
         </section>
