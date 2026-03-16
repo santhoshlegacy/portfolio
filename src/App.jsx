@@ -105,23 +105,26 @@ const ScrollProgress = () => {
   );
 };
 
-// 5. FLOATING HUD NAVIGATION
+// 5. FLOATING HUD NAVIGATION (Alignment & Mobile Fix)
 const FloatingHUD = () => {
   return (
     <motion.div 
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 1, duration: 0.8, type: "spring" }}
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+      // Use full width flex centering instead of transform math for perfect alignment
+      className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none"
     >
-      <div className="flex items-center gap-6 px-8 py-4 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_rgba(188,19,254,0.15)]">
+      {/* Added responsive gaps (gap-4 on mobile, gap-8 on desktop) so it doesn't stretch off-screen */}
+      <div className="flex items-center justify-center gap-4 md:gap-8 px-6 md:px-8 py-3 md:py-4 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_rgba(188,19,254,0.15)] pointer-events-auto w-max max-w-[95vw]">
         {[
           { icon: <Home size={20} />, label: "Core", link: "#" },
           { icon: <User size={20} />, label: "Identity", link: "#identity" },
           { icon: <Code2 size={20} />, label: "Database", link: "#projects" },
           { icon: <ShieldCheck size={20} />, label: "Comm", link: "#contact" },
         ].map((item, idx) => (
-          <MagneticElement key={idx}>
+          // Make sure the magnetic wrapper acts as a proper flex item
+          <MagneticElement key={idx} className="flex justify-center items-center">
             <a 
               href={item.link}
               className="group relative flex flex-col items-center gap-1 text-slate hover:text-neonBlue transition-colors duration-300"
