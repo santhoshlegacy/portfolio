@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GlowyWavesHero from "./components/GlowyWavesHero";
 import { motion, useMotionValue, useSpring, useTransform, useScroll, useInView } from 'framer-motion';
-import { Code2, Cpu, Mail, Github, Linkedin, ChevronRight, ShieldCheck, Youtube, Instagram, User, Globe, Lock, Home, Briefcase } from 'lucide-react';
+import { Code2, Cpu, Mail, Github, Linkedin, ChevronRight, ShieldCheck, Youtube, Instagram, User, Globe, Lock, Home, Zap, Terminal, AlertTriangle, Layers } from 'lucide-react';
 
-// --- 1. THE 3D TILT CARD (Immersive Depth Engine) ---
+// --- 1. THE 3D TILT CARD ---
 const TiltCard = ({ children, className = "" }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -22,10 +22,7 @@ const TiltCard = ({ children, className = "" }) => {
     y.set(mouseY / height - 0.5);
   };
 
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  const handleMouseLeave = () => { x.set(0); y.set(0); };
 
   return (
     <motion.div
@@ -43,7 +40,7 @@ const TiltCard = ({ children, className = "" }) => {
   );
 };
 
-// --- 2. UPGRADED STANDARD GLASS BOX ---
+// --- 2. GLASS BOX ---
 const GlassCard = ({ children, className = "" }) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
@@ -57,9 +54,7 @@ const GlassCard = ({ children, className = "" }) => (
   </motion.div>
 );
 
-// --- PHASE 1 UPGRADES: NAVIGATION & PHYSICS ---
-
-// 3. MAGNETIC UI WRAPPER
+// --- 3. MAGNETIC UI ---
 const MagneticElement = ({ children, className = "" }) => {
   const ref = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -90,7 +85,7 @@ const MagneticElement = ({ children, className = "" }) => {
   );
 };
 
-// 4. FIBER OPTIC SCROLL LINE
+// --- 4. SCROLL LINE ---
 const ScrollProgress = () => {
   const { scrollYProgress } = useScroll();
   const scaleY = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
@@ -105,7 +100,7 @@ const ScrollProgress = () => {
   );
 };
 
-// 5. FLOATING HUD NAVIGATION 
+// --- 5. FLOATING HUD ---
 const FloatingHUD = () => {
   return (
     <motion.div 
@@ -122,13 +117,8 @@ const FloatingHUD = () => {
           { icon: <ShieldCheck size={20} />, label: "Comm", link: "#contact" },
         ].map((item, idx) => (
           <MagneticElement key={idx} className="flex justify-center items-center">
-            <a 
-              href={item.link}
-              className="group relative flex flex-col items-center gap-1 text-slate hover:text-neonBlue transition-colors duration-300"
-            >
-              <div className="p-2 rounded-full group-hover:bg-neonBlue/10 transition-colors">
-                {item.icon}
-              </div>
+            <a href={item.link} className="group relative flex flex-col items-center gap-1 text-slate hover:text-neonBlue transition-colors duration-300">
+              <div className="p-2 rounded-full group-hover:bg-neonBlue/10 transition-colors">{item.icon}</div>
               <span className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-mono uppercase tracking-widest text-neonBlue bg-black/80 px-2 py-1 rounded border border-neonBlue/30 pointer-events-none">
                 {item.label}
               </span>
@@ -140,12 +130,37 @@ const FloatingHUD = () => {
   );
 };
 
-// --- PHASE 2 UPGRADES: ATMOSPHERE & IMMERSION ---
+// --- 6. THEME SWITCHER WIDGET ---
+const ThemeSwitcher = ({ themeHue, setThemeHue }) => {
+  const themes = [
+    { name: "Neon Matrix", hue: 0, icon: <Zap size={14} /> },
+    { name: "Hacker Protocol", hue: 110, icon: <Terminal size={14} /> },
+    { name: "System Alert", hue: -160, icon: <AlertTriangle size={14} /> }
+  ];
 
-// 6. CIPHER TEXT REVEAL
+  return (
+    <div className="fixed top-6 right-6 z-50">
+      <div className="flex flex-col gap-2 bg-black/60 backdrop-blur-xl border border-white/10 p-2 rounded-2xl shadow-[0_0_20px_rgba(188,19,254,0.1)]">
+        {themes.map((t) => (
+          <button
+            key={t.name}
+            onClick={() => setThemeHue(t.hue)}
+            title={t.name}
+            className={`p-3 rounded-xl transition-all duration-300 flex items-center justify-center ${
+              themeHue === t.hue ? 'bg-neonBlue/20 text-neonBlue shadow-[0_0_10px_rgba(0,242,255,0.4)]' : 'text-slate hover:bg-white/10'
+            }`}
+          >
+            {t.icon}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// --- 7. CIPHER TEXT REVEAL ---
 const CipherText = ({ text, className = "" }) => {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-  
   const [displayText, setDisplayText] = useState(() => 
     text.split("").map(() => letters[Math.floor(Math.random() * letters.length)]).join("")
   );
@@ -155,7 +170,6 @@ const CipherText = ({ text, className = "" }) => {
 
   useEffect(() => {
     if (!isInView) return;
-    
     let iteration = 0;
     const interval = setInterval(() => {
       setDisplayText((prev) =>
@@ -167,24 +181,19 @@ const CipherText = ({ text, className = "" }) => {
       if (iteration >= text.length) clearInterval(interval);
       iteration += 1 / 3;
     }, 30);
-    
     return () => clearInterval(interval);
   }, [isInView, text]);
 
   return (
-    <span 
-      ref={ref}
-      className={`transition-colors duration-500 ${isInView ? 'text-neonBlue drop-shadow-[0_0_8px_rgba(0,242,255,0.8)]' : 'text-slate'} ${className}`} 
-    >
+    <span ref={ref} className={`transition-colors duration-500 ${isInView ? 'text-neonBlue drop-shadow-[0_0_8px_rgba(0,242,255,0.8)]' : 'text-slate'} ${className}`}>
       {displayText}
     </span>
   );
 };
 
-// 7. QUANTUM PARTICLE PHYSICS CANVAS
+// --- 8. QUANTUM PARTICLE PHYSICS ---
 const QuantumCanvas = () => {
   const canvasRef = useRef(null);
-  
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -192,7 +201,6 @@ const QuantumCanvas = () => {
     let height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
-
     let particles = [];
     const mouse = { x: width / 2, y: height / 2 };
 
@@ -228,7 +236,6 @@ const QuantumCanvas = () => {
       for (let i = 0; i < particles.length; i++) {
         particles[i].update();
         particles[i].draw();
-        
         const dx = mouse.x - particles[i].x;
         const dy = mouse.y - particles[i].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -240,7 +247,6 @@ const QuantumCanvas = () => {
           ctx.lineTo(mouse.x, mouse.y);
           ctx.stroke();
         }
-        
         for (let j = i; j < particles.length; j++) {
           const dx2 = particles[i].x - particles[j].x;
           const dy2 = particles[i].y - particles[j].y;
@@ -258,31 +264,64 @@ const QuantumCanvas = () => {
     };
     animate();
 
-    const handleResize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    };
+    const handleResize = () => { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; };
     window.addEventListener('resize', handleResize);
 
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => { window.removeEventListener('mousemove', handleMouseMove); window.removeEventListener('resize', handleResize); };
   }, []);
 
   return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-40" />;
 };
 
-// --- PHASE 3 UPGRADES: SHOWPIECES ---
+// --- 9. 3D SKILL ORBIT ---
+const SkillOrbit = () => {
+  const skills = ["React", "Next.js", "Tailwind", "TypeScript", "Firebase", "Node.js", "Framer", "Git"];
+  
+  return (
+    <div className="relative w-full h-[350px] flex items-center justify-center overflow-hidden my-10">
+      {/* Center Core */}
+      <div className="absolute z-20 w-16 h-16 bg-black border border-neonPurple flex items-center justify-center rounded-full shadow-[0_0_30px_rgba(188,19,254,0.4)]">
+        <Cpu className="text-neonPurple animate-pulse" size={32} />
+      </div>
+      
+      {/* Radar Rings */}
+      <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
+         <div className="w-[180px] h-[180px] rounded-full border border-white/5 absolute" />
+         <div className="w-[300px] h-[300px] rounded-full border border-white/10 absolute border-dashed animate-[spin_40s_linear_infinite]" />
+      </div>
 
-// 8. DECLASSIFIED CLIENT DATABANKS (Secure Vault UI)
-const DeclassifiedVault = () => {
+      {/* Orbiting Tech Stack */}
+      <motion.div 
+        animate={{ rotate: 360 }}
+        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+        className="absolute w-[260px] h-[260px] flex items-center justify-center z-10"
+      >
+        {skills.map((skill, index) => {
+          const angle = (index / skills.length) * 360;
+          return (
+            <motion.div key={skill} className="absolute" style={{ rotate: angle, translateX: 130 }}>
+              {/* Counter-rotation to keep text upright */}
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                style={{ rotate: -angle }}
+                className="px-4 py-2 bg-black/80 backdrop-blur-sm border border-neonBlue text-neonBlue text-xs font-mono rounded-full whitespace-nowrap shadow-[0_0_15px_rgba(0,242,255,0.2)] cursor-default"
+              >
+                {skill}
+              </motion.div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+    </div>
+  );
+};
+
+// --- 10. DECLASSIFIED CLIENT DATABANKS ---
+const DeclassifiedVault = ({ themeHue }) => {
   const [activeFile, setActiveFile] = useState(0);
   const [isDecrypting, setIsDecrypting] = useState(false);
 
-  // Corrected Project Order & Details
   const projects = [
     {
       id: "DOC-01",
@@ -324,8 +363,6 @@ const DeclassifiedVault = () => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full relative z-10">
-      
-      {/* LEFT SIDE: File Directory */}
       <div className="w-full lg:w-1/3 flex flex-col gap-3">
         <h3 className="text-neonBlue font-mono text-xs uppercase tracking-[0.3em] mb-2 px-2 flex items-center gap-2">
           <ShieldCheck size={14} /> Encrypted Files
@@ -335,24 +372,17 @@ const DeclassifiedVault = () => {
             key={proj.id}
             onClick={() => handleFileSelect(idx)}
             className={`text-left px-6 py-4 rounded-xl border font-mono transition-all duration-300 relative overflow-hidden group ${
-              activeFile === idx 
-              ? 'bg-neonBlue/10 border-neonBlue text-white shadow-[0_0_15px_rgba(0,242,255,0.2)]' 
-              : 'bg-black/40 border-white/5 text-slate hover:bg-white/5 hover:border-white/20'
+              activeFile === idx ? 'bg-neonBlue/10 border-neonBlue text-white shadow-[0_0_15px_rgba(0,242,255,0.2)]' : 'bg-black/40 border-white/5 text-slate hover:bg-white/5 hover:border-white/20'
             }`}
           >
-            {activeFile === idx && (
-              <motion.div layoutId="active-file" className="absolute left-0 top-0 bottom-0 w-1 bg-neonBlue shadow-[0_0_10px_rgba(0,242,255,1)]" />
-            )}
+            {activeFile === idx && <motion.div layoutId="active-file" className="absolute left-0 top-0 bottom-0 w-1 bg-neonBlue shadow-[0_0_10px_rgba(0,242,255,1)]" />}
             <div className="text-[10px] text-neonPurple mb-1">{proj.id} // {proj.status}</div>
             <div className="font-bold tracking-wider">{proj.client}</div>
           </button>
         ))}
       </div>
 
-      {/* RIGHT SIDE: File Viewer */}
       <GlassCard className="w-full lg:w-2/3 min-h-[400px] flex flex-col p-0 overflow-hidden relative group">
-        
-        {/* Decryption Overlay Effect */}
         {isDecrypting && (
           <div className="absolute inset-0 z-50 bg-black/90 flex flex-col items-center justify-center font-mono text-neonBlue">
             <Lock size={32} className="mb-4 animate-pulse" />
@@ -363,34 +393,30 @@ const DeclassifiedVault = () => {
           </div>
         )}
 
-        {/* File Content */}
         <div className={`transition-opacity duration-300 p-8 flex flex-col h-full ${isDecrypting ? 'opacity-0' : 'opacity-100'}`}>
           <div className="flex justify-between items-start mb-6">
             <div>
               <h2 className="text-3xl font-black text-white uppercase tracking-tight">{active.client}</h2>
               <p className="text-neonPurple font-mono text-sm uppercase tracking-widest mt-1">{active.type}</p>
             </div>
-            <span className="px-3 py-1 border border-neonBlue/30 bg-neonBlue/10 text-neonBlue text-[10px] font-mono rounded uppercase">
-              {active.status}
-            </span>
+            <span className="px-3 py-1 border border-neonBlue/30 bg-neonBlue/10 text-neonBlue text-[10px] font-mono rounded uppercase">{active.status}</span>
           </div>
 
           <div className="relative w-full h-48 rounded-lg overflow-hidden border border-white/10 mb-6 group-hover:border-neonBlue/50 transition-colors duration-500">
+            {/* Reverse the Hue rotation on images so they stay their original colors! */}
             <img 
               src={`${import.meta.env.BASE_URL}${active.image}`} 
               alt={active.client} 
+              style={{ filter: `hue-rotate(${-themeHue}deg)` }}
               className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" 
             />
             <div className="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent" />
           </div>
 
           <p className="text-slate leading-relaxed mb-6 flex-grow">{active.description}</p>
-
           <div className="flex flex-wrap gap-2 mt-auto">
             {active.tech.map((tech) => (
-              <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs font-mono text-neonBlue">
-                {tech}
-              </span>
+              <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs font-mono text-neonBlue">{tech}</span>
             ))}
           </div>
         </div>
@@ -404,66 +430,55 @@ const DeclassifiedVault = () => {
 export default function App() {
   const [securityAnswer, setSecurityAnswer] = useState("");
   const isHumanVerified = securityAnswer === "5";
+  const [themeHue, setThemeHue] = useState(0); // Master theme state
 
   useEffect(() => {
     document.documentElement.style.scrollBehavior = 'smooth';
-    return () => {
-      document.documentElement.style.scrollBehavior = 'auto';
-    };
+    return () => { document.documentElement.style.scrollBehavior = 'auto'; };
   }, []);
 
   return (
-    <div className="bg-dark min-h-screen text-slate font-sans selection:bg-neonPurple selection:text-white relative overflow-x-hidden">
+    // Global Theme Hue Rotation Engine applied here
+    <div style={{ filter: `hue-rotate(${themeHue}deg)`, transition: 'filter 1s ease-in-out' }} className="bg-dark min-h-screen text-slate font-sans selection:bg-neonPurple selection:text-white relative overflow-x-hidden">
       
       <ScrollProgress />
       <FloatingHUD />
+      <ThemeSwitcher themeHue={themeHue} setThemeHue={setThemeHue} />
       <QuantumCanvas />
 
       <div className="fixed inset-0 bg-tech-grid bg-[size:40px_40px] pointer-events-none z-0 opacity-20" />
       
-      <motion.div 
-        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-neonBlue/10 blur-[150px] rounded-full pointer-events-none z-0" 
-      />
-      <motion.div 
-        animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-neonPurple/10 blur-[150px] rounded-full pointer-events-none z-0" 
-      />
+      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-neonBlue/10 blur-[150px] rounded-full pointer-events-none z-0" />
+      <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-neonPurple/10 blur-[150px] rounded-full pointer-events-none z-0" />
 
       <main className="relative z-10">
-        
-        {/* --- HERO SECTION --- */}
         <GlowyWavesHero />
 
-        {/* --- 3D ABOUT ME SECTION --- */}
+        {/* --- IDENTITY SECTION --- */}
         <section id="identity" className="max-w-6xl mx-auto px-6 py-20">
           <div className="flex items-center gap-3 mb-10">
             <User className="text-neonPurple" size={28} />
-            <h2 className="text-3xl font-bold text-white uppercase tracking-widest">
-              <CipherText text="Identity Record" />
-            </h2>
+            <h2 className="text-3xl font-bold text-white uppercase tracking-widest"><CipherText text="Identity Record" /></h2>
           </div>
 
           <TiltCard className="w-full">
             <div className="group bg-black/40 backdrop-blur-xl border border-white/10 hover:-translate-y-2 hover:border-neonBlue/50 hover:shadow-[0_15px_40px_rgba(0,242,255,0.15)] rounded-3xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row gap-10 items-center overflow-hidden transition-all duration-500 ease-out relative">
               <div className="absolute inset-0 bg-gradient-to-tr from-neonBlue/10 via-transparent to-neonPurple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-              <div 
-                className="w-48 h-48 rounded-full border-2 border-neonPurple/50 p-2 shrink-0 relative z-10"
-                style={{ transform: "translateZ(50px)" }}
-              >
+              <div className="w-48 h-48 rounded-full border-2 border-neonPurple/50 p-2 shrink-0 relative z-10" style={{ transform: "translateZ(50px)" }}>
                 <div className="absolute inset-0 rounded-full border border-neonBlue animate-[spin_10s_linear_infinite]" />
-                <img src={`${import.meta.env.BASE_URL}avatar.jpg`} alt="Profile" className="w-full h-full rounded-full object-cover bg-white/5" />
+                <img 
+                  src={`${import.meta.env.BASE_URL}avatar.jpg`} 
+                  alt="Profile" 
+                  style={{ filter: `hue-rotate(${-themeHue}deg)` }} // Prevent avatar from changing colors
+                  className="w-full h-full rounded-full object-cover bg-white/5" 
+                />
               </div>
 
               <div style={{ transform: "translateZ(40px)" }} className="flex-1 text-center md:text-left z-10 relative">
                 <h3 className="text-4xl font-black text-white mb-2 tracking-tight">Website Developer <span className="text-neonBlue">&</span> Designer</h3>
                 <p className="text-neonPurple font-mono text-sm uppercase tracking-widest mb-6">Independent Freelancer</p>
-                <p className="text-slate leading-relaxed mb-8">
-                  I engineer immersive, high-performance digital experiences. Specializing in highly scalable architectures and ultra-modern UI/UX designs, I transform complex technical requirements into seamless, visually stunning interfaces. Whether it's a sleek landing page or a full-scale web application, I build for the future.
-                </p>
+                <p className="text-slate leading-relaxed mb-8">I engineer immersive, high-performance digital experiences. Specializing in highly scalable architectures and ultra-modern UI/UX designs, I transform complex technical requirements into seamless, visually stunning interfaces. Whether it's a sleek landing page or a full-scale web application, I build for the future.</p>
 
                 <div className="flex flex-wrap justify-center md:justify-start gap-4">
                   {[
@@ -474,115 +489,70 @@ export default function App() {
                     { icon: <Instagram size={20} />, link: "https://instagram.com/snths.legacy", label: "Instagram" }
                   ].map((social, idx) => (
                     <MagneticElement key={idx}>
-                      <a 
-                        href={social.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 bg-white/5 hover:bg-neonBlue/10 hover:-translate-y-1 border border-white/5 hover:border-neonBlue/50 text-slate hover:text-neonBlue px-4 py-2 rounded-lg transition-all duration-300 ease-out font-mono text-xs uppercase relative z-20"
-                      >
+                      <a href={social.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white/5 hover:bg-neonBlue/10 hover:-translate-y-1 border border-white/5 hover:border-neonBlue/50 text-slate hover:text-neonBlue px-4 py-2 rounded-lg transition-all duration-300 ease-out font-mono text-xs uppercase relative z-20">
                         {social.icon} {social.label}
                       </a>
                     </MagneticElement>
                   ))}
                 </div>
               </div>
-
             </div>
           </TiltCard>
         </section>
 
-        {/* --- SECURE VAULT (Projects & Skills) --- */}
+        {/* --- PROJECTS & SKILL ORBIT SECTION --- */}
         <section id="projects" className="max-w-6xl mx-auto px-6 py-20">
           <div className="flex items-center gap-3 mb-10">
-            <Code2 className="text-neonPurple" size={28} />
-            <h2 className="text-3xl font-bold text-white uppercase tracking-widest">
-              <CipherText text="Database Records" />
-            </h2>
+            <Layers className="text-neonPurple" size={28} />
+            <h2 className="text-3xl font-bold text-white uppercase tracking-widest"><CipherText text="Systems & Arsenal" /></h2>
           </div>
           
-          <DeclassifiedVault />
-          
+          <GlassCard className="mb-10 border-neonBlue/20 bg-neonBlue/[0.02]">
+             <h3 className="text-center font-mono text-neonBlue text-sm tracking-widest uppercase mb-4">Core Technology Stack</h3>
+             <SkillOrbit />
+          </GlassCard>
+
+          <DeclassifiedVault themeHue={themeHue} />
         </section>
 
-        {/* --- SECURE CONTACT FORM --- */}
+        {/* --- CONTACT FORM --- */}
         <section id="contact" className="max-w-3xl mx-auto px-6 py-20">
           <div className="flex items-center justify-center gap-2 mb-8">
             <ShieldCheck className="text-neonBlue" size={24} />
-            <h2 className="text-2xl font-bold text-white uppercase tracking-widest">
-              <CipherText text="Initiate Project" />
-            </h2>
+            <h2 className="text-2xl font-bold text-white uppercase tracking-widest"><CipherText text="Initiate Project" /></h2>
           </div>
           
           <GlassCard className="p-8 md:p-10 relative">
             <form action="https://api.web3forms.com/submit" method="POST" className="flex flex-col gap-6 relative z-10">
-              
               <input type="hidden" name="access_key" value="a0e93df5-1a65-48e3-82c2-a7da166f70f1" />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Client Name</label>
-                  <input 
-                    type="text" 
-                    name="name" 
-                    required 
-                    maxLength="50"
-                    pattern="^[a-zA-Z\s]+$"
-                    title="Please enter a valid name (letters and spaces only)."
-                    className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" 
-                    placeholder="Enter designator..." 
-                  />
+                  <input type="text" name="name" required maxLength="50" pattern="^[a-zA-Z\s]+$" title="Please enter a valid name (letters and spaces only)." className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" placeholder="Enter designator..." />
                 </div>
-
                 <div className="flex flex-col gap-2">
                   <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Comm Link (Email)</label>
-                  <input 
-                    type="email" 
-                    name="email" 
-                    required 
-                    maxLength="100"
-                    className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" 
-                    placeholder="Enter address..." 
-                  />
+                  <input type="email" name="email" required maxLength="100" className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" placeholder="Enter address..." />
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Transmission Data</label>
-                <textarea 
-                  name="message" 
-                  required 
-                  maxLength="1000"
-                  rows="4" 
-                  className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out resize-none font-mono text-sm" 
-                  placeholder="Describe your freelance project..."
-                ></textarea>
+                <textarea name="message" required maxLength="1000" rows="4" className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out resize-none font-mono text-sm" placeholder="Describe your freelance project..."></textarea>
               </div>
 
               <div className="flex flex-col gap-2 border-t border-white/10 pt-6 mt-2">
                 <label className="text-neonPurple flex items-center gap-2 text-xs font-mono uppercase tracking-widest">
                   <Lock size={14} /> Security Override: 2 + 3 = ?
                 </label>
-                <input 
-                  type="text" 
-                  value={securityAnswer}
-                  onChange={(e) => setSecurityAnswer(e.target.value)}
-                  className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonPurple/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm w-full md:w-1/2" 
-                  placeholder="Enter verification code..." 
-                />
+                <input type="text" value={securityAnswer} onChange={(e) => setSecurityAnswer(e.target.value)} className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonPurple/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm w-full md:w-1/2" placeholder="Enter verification code..." />
               </div>
 
               <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
 
               <MagneticElement className="w-full md:w-auto self-end mt-4">
-                <button 
-                  type="submit" 
-                  disabled={!isHumanVerified}
-                  className={`px-8 py-4 font-bold rounded-lg transition-all duration-300 ease-out uppercase tracking-widest text-sm w-full flex justify-center items-center gap-2 ${
-                    isHumanVerified 
-                    ? 'bg-neonPurple text-white hover:shadow-[0_0_20px_rgba(188,19,254,0.4)] hover:-translate-y-1' 
-                    : 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                  }`}
-                >
+                <button type="submit" disabled={!isHumanVerified} className={`px-8 py-4 font-bold rounded-lg transition-all duration-300 ease-out uppercase tracking-widest text-sm w-full flex justify-center items-center gap-2 ${isHumanVerified ? 'bg-neonPurple text-white hover:shadow-[0_0_20px_rgba(188,19,254,0.4)] hover:-translate-y-1' : 'bg-gray-800 text-gray-500 cursor-not-allowed'}`}>
                   {isHumanVerified ? "Transmit Payload" : "System Locked"}
                 </button>
               </MagneticElement>
