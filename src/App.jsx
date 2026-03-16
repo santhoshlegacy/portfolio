@@ -282,32 +282,33 @@ const DeclassifiedVault = () => {
   const [activeFile, setActiveFile] = useState(0);
   const [isDecrypting, setIsDecrypting] = useState(false);
 
+  // Corrected Project Order & Details
   const projects = [
     {
       id: "DOC-01",
-      client: "SK Refrigeration",
-      type: "Commercial Interface",
+      client: "CityPulse",
+      type: "Full-Stack Application",
       status: "DEPLOYED",
-      description: "Engineered a high-performance digital storefront and service portal for commercial cooling operations. Features optimized routing for service requests and a thermal-reactive UI.",
+      description: "Engineered a high-performance full-stack application featuring optimized routing and a seamless UI/UX designed for comprehensive data management.",
       tech: ["React", "Tailwind CSS", "Firebase"],
       image: "citypulse.jpg" 
     },
     {
       id: "DOC-02",
-      client: "Hackathon Protocol",
-      type: "10-Hour Rapid Build",
-      status: "ARCHIVED",
-      description: "A high-intensity deployment utilizing Next.js, TypeScript, and React-Leaflet. Engineered under extreme time constraints to deliver a fully functional spatial mapping application.",
-      tech: ["Next.js", "TypeScript", "React-Leaflet"],
+      client: "Nexus AI",
+      type: "Neural Interface SaaS",
+      status: "ACTIVE",
+      description: "Developed a futuristic analytics dashboard for neural networking data. Includes real-time node mapping, high-frequency data streaming, and advanced security visualization.",
+      tech: ["Next.js", "Framer Motion", "TypeScript"],
       image: "nexus.jpg"
     },
     {
       id: "DOC-03",
-      client: "Institute Operations",
-      type: "Education & Leadership",
-      status: "ACTIVE",
-      description: "Digital infrastructure and event management for a computer education institute. Recently utilized to organize and coordinate a highly successful drawing competition.",
-      tech: ["JavaScript", "Framer Motion", "Tailwind"],
+      client: "AeroGear",
+      type: "Cyberpunk E-Commerce",
+      status: "ARCHIVED",
+      description: "High-conversion digital marketplace featuring immersive 3D product rendering, neon-brutalist typography, and highly secure payment gateway integrations.",
+      tech: ["JavaScript", "Three.js", "Stripe API"],
       image: "aerogear.jpg"
     }
   ];
