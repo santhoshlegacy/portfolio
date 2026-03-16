@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GlowyWavesHero from "./components/GlowyWavesHero";
-import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, useScroll, useInView } from 'framer-motion';
 import { Code2, Cpu, Mail, Github, Linkedin, ChevronRight, ShieldCheck, Youtube, Instagram, User, Globe, Lock, Home, Briefcase } from 'lucide-react';
 
 // --- 1. THE 3D TILT CARD (Immersive Depth Engine) ---
@@ -105,7 +105,7 @@ const ScrollProgress = () => {
   );
 };
 
-// 5. FLOATING HUD NAVIGATION (Alignment & Mobile Fix)
+// 5. FLOATING HUD NAVIGATION 
 const FloatingHUD = () => {
   return (
     <motion.div 
@@ -142,14 +142,22 @@ const FloatingHUD = () => {
 
 // --- PHASE 2 UPGRADES: ATMOSPHERE & IMMERSION ---
 
-// 6. CIPHER TEXT REVEAL
+// 6. CIPHER TEXT REVEAL (Upgraded to trigger on scroll)
 const CipherText = ({ text, className = "" }) => {
-  const [displayText, setDisplayText] = useState(text);
-  const [isHovered, setIsHovered] = useState(false);
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+  
+  // Start fully encrypted
+  const [displayText, setDisplayText] = useState(() => 
+    text.split("").map(() => letters[Math.floor(Math.random() * letters.length)]).join("")
+  );
+  
+  const ref = useRef(null);
+  // useInView watches the element and triggers when it enters the viewport
+  const isInView = useInView(ref, { once: true, margin: "-10%" }); 
 
   useEffect(() => {
-    if (!isHovered) return;
+    if (!isInView) return; // Wait until the user scrolls to it
+    
     let iteration = 0;
     const interval = setInterval(() => {
       setDisplayText((prev) =>
@@ -163,13 +171,12 @@ const CipherText = ({ text, className = "" }) => {
     }, 30);
     
     return () => clearInterval(interval);
-  }, [isHovered, text]);
+  }, [isInView, text]);
 
   return (
     <span 
-      className={`cursor-crosshair transition-colors duration-300 ${isHovered ? 'text-neonBlue drop-shadow-[0_0_8px_rgba(0,242,255,0.8)]' : ''} ${className}`} 
-      onMouseEnter={() => setIsHovered(true)} 
-      onMouseLeave={() => { setIsHovered(false); setDisplayText(text); }}
+      ref={ref}
+      className={`transition-colors duration-500 ${isInView ? 'text-neonBlue drop-shadow-[0_0_8px_rgba(0,242,255,0.8)]' : 'text-slate'} ${className}`} 
     >
       {displayText}
     </span>
@@ -290,7 +297,6 @@ export default function App() {
       <FloatingHUD />
       <QuantumCanvas />
 
-      {/* Grid opacity reduced so particles are more visible */}
       <div className="fixed inset-0 bg-tech-grid bg-[size:40px_40px] pointer-events-none z-0 opacity-20" />
       
       <motion.div 
