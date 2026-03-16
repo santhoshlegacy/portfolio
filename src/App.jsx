@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GlowyWavesHero from "./components/GlowyWavesHero";
 import { motion, useMotionValue, useSpring, useTransform, useScroll, useInView } from 'framer-motion';
-import { Code2, Cpu, Mail, Github, Linkedin, ChevronRight, ShieldCheck, Youtube, Instagram, User, Globe, Lock, Home, Zap, Terminal, AlertTriangle, Layers } from 'lucide-react';
+import { Code2, Mail, Github, Linkedin, ShieldCheck, Youtube, Instagram, User, Lock, Home, Zap, Terminal, AlertTriangle, Layers } from 'lucide-react';
 
 // --- 1. THE 3D TILT CARD ---
 const TiltCard = ({ children, className = "" }) => {
@@ -100,7 +100,7 @@ const ScrollProgress = () => {
   );
 };
 
-// --- 5. FLOATING HUD ---
+// --- 5. FLOATING HUD (Transparent Background) ---
 const FloatingHUD = () => {
   return (
     <motion.div 
@@ -109,7 +109,8 @@ const FloatingHUD = () => {
       transition={{ delay: 1, duration: 0.8, type: "spring" }}
       className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none"
     >
-      <div className="flex items-center justify-center gap-4 md:gap-8 px-6 md:px-8 py-3 md:py-4 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_rgba(188,19,254,0.15)] pointer-events-auto w-max max-w-[95vw]">
+      {/* Changed to bg-transparent, removed borders and blur */}
+      <div className="flex items-center justify-center gap-4 md:gap-8 px-6 md:px-8 py-3 md:py-4 rounded-full bg-transparent pointer-events-auto w-max max-w-[95vw]">
         {[
           { icon: <Home size={20} />, label: "Core", link: "#" },
           { icon: <User size={20} />, label: "Identity", link: "#identity" },
@@ -273,51 +274,7 @@ const QuantumCanvas = () => {
   return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-40" />;
 };
 
-// --- 9. 3D SKILL ORBIT ---
-const SkillOrbit = () => {
-  const skills = ["React", "Next.js", "Tailwind", "TypeScript", "Firebase", "Node.js", "Framer", "Git"];
-  
-  return (
-    <div className="relative w-full h-[350px] flex items-center justify-center overflow-hidden my-10">
-      {/* Center Core */}
-      <div className="absolute z-20 w-16 h-16 bg-black border border-neonPurple flex items-center justify-center rounded-full shadow-[0_0_30px_rgba(188,19,254,0.4)]">
-        <Cpu className="text-neonPurple animate-pulse" size={32} />
-      </div>
-      
-      {/* Radar Rings */}
-      <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
-         <div className="w-[180px] h-[180px] rounded-full border border-white/5 absolute" />
-         <div className="w-[300px] h-[300px] rounded-full border border-white/10 absolute border-dashed animate-[spin_40s_linear_infinite]" />
-      </div>
-
-      {/* Orbiting Tech Stack */}
-      <motion.div 
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[260px] h-[260px] flex items-center justify-center z-10"
-      >
-        {skills.map((skill, index) => {
-          const angle = (index / skills.length) * 360;
-          return (
-            <motion.div key={skill} className="absolute" style={{ rotate: angle, translateX: 130 }}>
-              {/* Counter-rotation to keep text upright */}
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                style={{ rotate: -angle }}
-                className="px-4 py-2 bg-black/80 backdrop-blur-sm border border-neonBlue text-neonBlue text-xs font-mono rounded-full whitespace-nowrap shadow-[0_0_15px_rgba(0,242,255,0.2)] cursor-default"
-              >
-                {skill}
-              </motion.div>
-            </motion.div>
-          );
-        })}
-      </motion.div>
-    </div>
-  );
-};
-
-// --- 10. DECLASSIFIED CLIENT DATABANKS ---
+// --- 9. DECLASSIFIED CLIENT DATABANKS ---
 const DeclassifiedVault = ({ themeHue }) => {
   const [activeFile, setActiveFile] = useState(0);
   const [isDecrypting, setIsDecrypting] = useState(false);
@@ -403,7 +360,6 @@ const DeclassifiedVault = ({ themeHue }) => {
           </div>
 
           <div className="relative w-full h-48 rounded-lg overflow-hidden border border-white/10 mb-6 group-hover:border-neonBlue/50 transition-colors duration-500">
-            {/* Reverse the Hue rotation on images so they stay their original colors! */}
             <img 
               src={`${import.meta.env.BASE_URL}${active.image}`} 
               alt={active.client} 
@@ -430,7 +386,7 @@ const DeclassifiedVault = ({ themeHue }) => {
 export default function App() {
   const [securityAnswer, setSecurityAnswer] = useState("");
   const isHumanVerified = securityAnswer === "5";
-  const [themeHue, setThemeHue] = useState(0); // Master theme state
+  const [themeHue, setThemeHue] = useState(0); 
 
   useEffect(() => {
     document.documentElement.style.scrollBehavior = 'smooth';
@@ -438,7 +394,6 @@ export default function App() {
   }, []);
 
   return (
-    // Global Theme Hue Rotation Engine applied here
     <div style={{ filter: `hue-rotate(${themeHue}deg)`, transition: 'filter 1s ease-in-out' }} className="bg-dark min-h-screen text-slate font-sans selection:bg-neonPurple selection:text-white relative overflow-x-hidden">
       
       <ScrollProgress />
@@ -470,7 +425,7 @@ export default function App() {
                 <img 
                   src={`${import.meta.env.BASE_URL}avatar.jpg`} 
                   alt="Profile" 
-                  style={{ filter: `hue-rotate(${-themeHue}deg)` }} // Prevent avatar from changing colors
+                  style={{ filter: `hue-rotate(${-themeHue}deg)` }} 
                   className="w-full h-full rounded-full object-cover bg-white/5" 
                 />
               </div>
@@ -500,17 +455,14 @@ export default function App() {
           </TiltCard>
         </section>
 
-        {/* --- PROJECTS & SKILL ORBIT SECTION --- */}
+        {/* --- PROJECTS SECTION --- */}
         <section id="projects" className="max-w-6xl mx-auto px-6 py-20">
           <div className="flex items-center gap-3 mb-10">
             <Layers className="text-neonPurple" size={28} />
             <h2 className="text-3xl font-bold text-white uppercase tracking-widest"><CipherText text="Systems & Arsenal" /></h2>
           </div>
           
-          <GlassCard className="mb-10 border-neonBlue/20 bg-neonBlue/[0.02]">
-             <h3 className="text-center font-mono text-neonBlue text-sm tracking-widest uppercase mb-4">Core Technology Stack</h3>
-             <SkillOrbit />
-          </GlassCard>
+          {/* Skill Orbit has been removed as requested */}
 
           <DeclassifiedVault themeHue={themeHue} />
         </section>
