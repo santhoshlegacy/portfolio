@@ -449,8 +449,6 @@ export default function App() {
           <GlassCard className="p-8 md:p-10 relative">
             <form action="https://api.web3forms.com/submit" method="POST" className="flex flex-col gap-6 relative z-10">
   <input type="hidden" name="access_key" value="a0e93df5-1a65-48e3-82c2-a7da166f70f1" />
-  {/* NEW: Automated Email Reply to the User */}
-  <input type="hidden" name="autoresponse" value="Transmission received. Thank you for initiating contact! I will review your project parameters and respond to your comm link shortly. - Santhosh (Website Developer & Designer)" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Client Name</label>
