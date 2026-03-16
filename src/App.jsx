@@ -142,21 +142,19 @@ const FloatingHUD = () => {
 
 // --- PHASE 2 UPGRADES: ATMOSPHERE & IMMERSION ---
 
-// 6. CIPHER TEXT REVEAL (Upgraded to trigger on scroll)
+// 6. CIPHER TEXT REVEAL
 const CipherText = ({ text, className = "" }) => {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
   
-  // Start fully encrypted
   const [displayText, setDisplayText] = useState(() => 
     text.split("").map(() => letters[Math.floor(Math.random() * letters.length)]).join("")
   );
   
   const ref = useRef(null);
-  // useInView watches the element and triggers when it enters the viewport
   const isInView = useInView(ref, { once: true, margin: "-10%" }); 
 
   useEffect(() => {
-    if (!isInView) return; // Wait until the user scrolls to it
+    if (!isInView) return;
     
     let iteration = 0;
     const interval = setInterval(() => {
@@ -277,6 +275,129 @@ const QuantumCanvas = () => {
   return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-40" />;
 };
 
+// --- PHASE 3 UPGRADES: SHOWPIECES ---
+
+// 8. DECLASSIFIED CLIENT DATABANKS (Secure Vault UI)
+const DeclassifiedVault = () => {
+  const [activeFile, setActiveFile] = useState(0);
+  const [isDecrypting, setIsDecrypting] = useState(false);
+
+  const projects = [
+    {
+      id: "DOC-01",
+      client: "SK Refrigeration",
+      type: "Commercial Interface",
+      status: "DEPLOYED",
+      description: "Engineered a high-performance digital storefront and service portal for commercial cooling operations. Features optimized routing for service requests and a thermal-reactive UI.",
+      tech: ["React", "Tailwind CSS", "Firebase"],
+      image: "citypulse.jpg" 
+    },
+    {
+      id: "DOC-02",
+      client: "Hackathon Protocol",
+      type: "10-Hour Rapid Build",
+      status: "ARCHIVED",
+      description: "A high-intensity deployment utilizing Next.js, TypeScript, and React-Leaflet. Engineered under extreme time constraints to deliver a fully functional spatial mapping application.",
+      tech: ["Next.js", "TypeScript", "React-Leaflet"],
+      image: "nexus.jpg"
+    },
+    {
+      id: "DOC-03",
+      client: "Institute Operations",
+      type: "Education & Leadership",
+      status: "ACTIVE",
+      description: "Digital infrastructure and event management for a computer education institute. Recently utilized to organize and coordinate a highly successful drawing competition.",
+      tech: ["JavaScript", "Framer Motion", "Tailwind"],
+      image: "aerogear.jpg"
+    }
+  ];
+
+  const handleFileSelect = (index) => {
+    if (activeFile === index) return;
+    setIsDecrypting(true);
+    setActiveFile(index);
+    setTimeout(() => setIsDecrypting(false), 600); 
+  };
+
+  const active = projects[activeFile];
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-6 w-full relative z-10">
+      
+      {/* LEFT SIDE: File Directory */}
+      <div className="w-full lg:w-1/3 flex flex-col gap-3">
+        <h3 className="text-neonBlue font-mono text-xs uppercase tracking-[0.3em] mb-2 px-2 flex items-center gap-2">
+          <ShieldCheck size={14} /> Encrypted Files
+        </h3>
+        {projects.map((proj, idx) => (
+          <button
+            key={proj.id}
+            onClick={() => handleFileSelect(idx)}
+            className={`text-left px-6 py-4 rounded-xl border font-mono transition-all duration-300 relative overflow-hidden group ${
+              activeFile === idx 
+              ? 'bg-neonBlue/10 border-neonBlue text-white shadow-[0_0_15px_rgba(0,242,255,0.2)]' 
+              : 'bg-black/40 border-white/5 text-slate hover:bg-white/5 hover:border-white/20'
+            }`}
+          >
+            {activeFile === idx && (
+              <motion.div layoutId="active-file" className="absolute left-0 top-0 bottom-0 w-1 bg-neonBlue shadow-[0_0_10px_rgba(0,242,255,1)]" />
+            )}
+            <div className="text-[10px] text-neonPurple mb-1">{proj.id} // {proj.status}</div>
+            <div className="font-bold tracking-wider">{proj.client}</div>
+          </button>
+        ))}
+      </div>
+
+      {/* RIGHT SIDE: File Viewer */}
+      <GlassCard className="w-full lg:w-2/3 min-h-[400px] flex flex-col p-0 overflow-hidden relative group">
+        
+        {/* Decryption Overlay Effect */}
+        {isDecrypting && (
+          <div className="absolute inset-0 z-50 bg-black/90 flex flex-col items-center justify-center font-mono text-neonBlue">
+            <Lock size={32} className="mb-4 animate-pulse" />
+            <span className="tracking-widest animate-pulse">DECRYPTING PAYLOAD...</span>
+            <div className="w-48 h-1 bg-white/10 mt-4 overflow-hidden rounded">
+              <div className="h-full bg-neonBlue animate-[slideRight_0.6s_ease-in-out_forwards]" />
+            </div>
+          </div>
+        )}
+
+        {/* File Content */}
+        <div className={`transition-opacity duration-300 p-8 flex flex-col h-full ${isDecrypting ? 'opacity-0' : 'opacity-100'}`}>
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-3xl font-black text-white uppercase tracking-tight">{active.client}</h2>
+              <p className="text-neonPurple font-mono text-sm uppercase tracking-widest mt-1">{active.type}</p>
+            </div>
+            <span className="px-3 py-1 border border-neonBlue/30 bg-neonBlue/10 text-neonBlue text-[10px] font-mono rounded uppercase">
+              {active.status}
+            </span>
+          </div>
+
+          <div className="relative w-full h-48 rounded-lg overflow-hidden border border-white/10 mb-6 group-hover:border-neonBlue/50 transition-colors duration-500">
+            <img 
+              src={`${import.meta.env.BASE_URL}${active.image}`} 
+              alt={active.client} 
+              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent" />
+          </div>
+
+          <p className="text-slate leading-relaxed mb-6 flex-grow">{active.description}</p>
+
+          <div className="flex flex-wrap gap-2 mt-auto">
+            {active.tech.map((tech) => (
+              <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs font-mono text-neonBlue">
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+      </GlassCard>
+    </div>
+  );
+};
+
 
 // --- MAIN APP ---
 export default function App() {
@@ -369,72 +490,17 @@ export default function App() {
           </TiltCard>
         </section>
 
-        {/* --- BENTO GRID (Projects & Skills) --- */}
+        {/* --- SECURE VAULT (Projects & Skills) --- */}
         <section id="projects" className="max-w-6xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            {/* Core Capabilities */}
-            <GlassCard className="lg:col-span-2">
-              <Code2 className="text-neonBlue mb-4" size={32} />
-              <h3 className="font-bold text-white mb-4 uppercase tracking-widest text-sm">
-                 <CipherText text="Core Capabilities" />
-              </h3>
-              <div className="flex flex-wrap gap-2 relative z-10">
-                {['React', 'Next.js', 'Tailwind CSS', 'Framer Motion', 'JavaScript', 'Firebase'].map(item => (
-                  <span key={item} className="text-xs border border-neonBlue/20 bg-neonBlue/5 text-neonBlue hover:bg-neonBlue/20 hover:text-white transition-colors duration-300 px-3 py-1.5 rounded-md font-mono cursor-default">{item}</span>
-                ))}
-              </div>
-            </GlassCard>
-
-            {/* CityPulse Project */}
-            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
-              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold text-white">CityPulse</h3>
-                  <p className="text-xs font-mono text-neonPurple mt-1">Full-Stack Application</p>
-                </div>
-              </div>
-              <div className="mt-auto px-4 pb-4 relative z-10">
-                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
-                  <img src={`${import.meta.env.BASE_URL}citypulse.jpg`} alt="CityPulse" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
-                </div>
-              </div>
-            </GlassCard>
-
-            {/* Nexus AI Project */}
-            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
-              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold text-white">Nexus AI</h3>
-                  <p className="text-xs font-mono text-neonBlue mt-1">Neural Interface SaaS</p>
-                </div>
-              </div>
-              <div className="mt-auto px-4 pb-4 relative z-10">
-                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonBlue/50 transition-colors duration-500 ease-out">
-                  <img src={`${import.meta.env.BASE_URL}nexus.jpg`} alt="Nexus AI Dashboard" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
-                </div>
-              </div>
-            </GlassCard>
-
-            {/* AeroGear Project */}
-            <GlassCard className="lg:col-span-2 flex flex-col p-0 overflow-hidden group">
-              <div className="p-8 pb-4 relative z-10 flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold text-white">AeroGear</h3>
-                  <p className="text-xs font-mono text-neonPurple mt-1">Cyberpunk E-Commerce</p>
-                </div>
-              </div>
-              <div className="mt-auto px-4 pb-4 relative z-10">
-                <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
-                  <img src={`${import.meta.env.BASE_URL}aerogear.jpg`} alt="AeroGear Storefront" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
-                </div>
-              </div>
-            </GlassCard>
-
+          <div className="flex items-center gap-3 mb-10">
+            <Code2 className="text-neonPurple" size={28} />
+            <h2 className="text-3xl font-bold text-white uppercase tracking-widest">
+              <CipherText text="Database Records" />
+            </h2>
           </div>
+          
+          <DeclassifiedVault />
+          
         </section>
 
         {/* --- SECURE CONTACT FORM --- */}
@@ -448,7 +514,9 @@ export default function App() {
           
           <GlassCard className="p-8 md:p-10 relative">
             <form action="https://api.web3forms.com/submit" method="POST" className="flex flex-col gap-6 relative z-10">
-  <input type="hidden" name="access_key" value="a0e93df5-1a65-48e3-82c2-a7da166f70f1" />
+              
+              <input type="hidden" name="access_key" value="a0e93df5-1a65-48e3-82c2-a7da166f70f1" />
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Client Name</label>
