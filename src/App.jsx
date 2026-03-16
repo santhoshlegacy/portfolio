@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import GlowyWavesHero from "./components/GlowyWavesHero";
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Code2, Cpu, Mail, Github, Linkedin, ChevronRight, ShieldCheck, Youtube, Instagram, User, Globe, Lock } from 'lucide-react';
+import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
+import { Code2, Cpu, Mail, Github, Linkedin, ChevronRight, ShieldCheck, Youtube, Instagram, User, Globe, Lock, Home, Briefcase } from 'lucide-react';
 
 // --- 1. THE 3D TILT CARD (Immersive Depth Engine) ---
 const TiltCard = ({ children, className = "" }) => {
@@ -57,6 +57,89 @@ const GlassCard = ({ children, className = "" }) => (
   </motion.div>
 );
 
+// --- PHASE 1 UPGRADES: NAVIGATION & PHYSICS ---
+
+// 3. MAGNETIC UI WRAPPER
+const MagneticElement = ({ children, className = "" }) => {
+  const ref = React.useRef(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouse = (e) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    setPosition({ x: middleX * 0.3, y: middleY * 0.3 });
+  };
+
+  const reset = () => setPosition({ x: 0, y: 0 });
+  const { x, y } = position;
+
+  return (
+    <motion.div
+      className={className}
+      style={{ position: "relative", zIndex: 50 }}
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x, y }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// 4. FIBER OPTIC SCROLL LINE
+const ScrollProgress = () => {
+  const { scrollYProgress } = useScroll();
+  const scaleY = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  return (
+    <div className="fixed top-0 right-0 bottom-0 w-1 bg-white/5 z-50 origin-top pointer-events-none">
+      <motion.div 
+        className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-b from-neonBlue to-neonPurple shadow-[0_0_15px_rgba(0,242,255,0.8)]"
+        style={{ scaleY, transformOrigin: "top" }}
+      />
+    </div>
+  );
+};
+
+// 5. FLOATING HUD NAVIGATION
+const FloatingHUD = () => {
+  return (
+    <motion.div 
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 1, duration: 0.8, type: "spring" }}
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+    >
+      <div className="flex items-center gap-6 px-8 py-4 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_rgba(188,19,254,0.15)]">
+        {[
+          { icon: <Home size={20} />, label: "Core", link: "#" },
+          { icon: <User size={20} />, label: "Identity", link: "#identity" },
+          { icon: <Code2 size={20} />, label: "Database", link: "#projects" },
+          { icon: <ShieldCheck size={20} />, label: "Comm", link: "#contact" },
+        ].map((item, idx) => (
+          <MagneticElement key={idx}>
+            <a 
+              href={item.link}
+              className="group relative flex flex-col items-center gap-1 text-slate hover:text-neonBlue transition-colors duration-300"
+            >
+              <div className="p-2 rounded-full group-hover:bg-neonBlue/10 transition-colors">
+                {item.icon}
+              </div>
+              <span className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-mono uppercase tracking-widest text-neonBlue bg-black/80 px-2 py-1 rounded border border-neonBlue/30 pointer-events-none">
+                {item.label}
+              </span>
+            </a>
+          </MagneticElement>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
 // --- MAIN APP ---
 export default function App() {
   const [securityAnswer, setSecurityAnswer] = useState("");
@@ -72,6 +155,10 @@ export default function App() {
   return (
     <div className="bg-dark min-h-screen text-slate font-sans selection:bg-neonPurple selection:text-white relative overflow-x-hidden">
       
+      {/* ADDED: Scroll Line & HUD */}
+      <ScrollProgress />
+      <FloatingHUD />
+
       {/* HIGH-TECH GRID BACKGROUND */}
       <div className="fixed inset-0 bg-tech-grid bg-[size:40px_40px] pointer-events-none z-0 opacity-50" />
       
@@ -91,8 +178,8 @@ export default function App() {
         {/* --- HERO SECTION --- */}
         <GlowyWavesHero />
 
-        {/* --- 3D ABOUT ME SECTION --- */}
-        <section className="max-w-6xl mx-auto px-6 py-20">
+        {/* --- 3D ABOUT ME SECTION --- Added id="identity" here for the HUD! */}
+        <section id="identity" className="max-w-6xl mx-auto px-6 py-20">
           <div className="flex items-center gap-3 mb-10">
             <User className="text-neonPurple" size={28} />
             <h2 className="text-3xl font-bold text-white uppercase tracking-widest">Identity Record</h2>
@@ -107,7 +194,6 @@ export default function App() {
                 style={{ transform: "translateZ(50px)" }}
               >
                 <div className="absolute inset-0 rounded-full border border-neonBlue animate-[spin_10s_linear_infinite]" />
-                {/* 🔴 AVATAR IMAGE FIXED HERE 🔴 */}
                 <img src={`${import.meta.env.BASE_URL}avatar.jpg`} alt="Profile" className="w-full h-full rounded-full object-cover bg-white/5" />
               </div>
 
@@ -126,15 +212,17 @@ export default function App() {
                     { icon: <Youtube size={20} />, link: "https://youtube.com/@ryzor.amv", label: "YouTube" },
                     { icon: <Instagram size={20} />, link: "https://instagram.com/snths.legacy", label: "Instagram" }
                   ].map((social, idx) => (
-                    <a 
-                      key={idx}
-                      href={social.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 bg-white/5 hover:bg-neonBlue/10 hover:-translate-y-1 border border-white/5 hover:border-neonBlue/50 text-slate hover:text-neonBlue px-4 py-2 rounded-lg transition-all duration-300 ease-out font-mono text-xs uppercase relative z-20"
-                    >
-                      {social.icon} {social.label}
-                    </a>
+                    // ADDED: Magnetic Wrapper around your social buttons!
+                    <MagneticElement key={idx}>
+                      <a 
+                        href={social.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 bg-white/5 hover:bg-neonBlue/10 hover:-translate-y-1 border border-white/5 hover:border-neonBlue/50 text-slate hover:text-neonBlue px-4 py-2 rounded-lg transition-all duration-300 ease-out font-mono text-xs uppercase relative z-20"
+                      >
+                        {social.icon} {social.label}
+                      </a>
+                    </MagneticElement>
                   ))}
                 </div>
               </div>
@@ -168,7 +256,6 @@ export default function App() {
               </div>
               <div className="mt-auto px-4 pb-4 relative z-10">
                 <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
-                  {/* 🔴 CITYPULSE IMAGE FIXED HERE 🔴 */}
                   <img src={`${import.meta.env.BASE_URL}citypulse.jpg`} alt="CityPulse" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
                   <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
                 </div>
@@ -185,7 +272,6 @@ export default function App() {
               </div>
               <div className="mt-auto px-4 pb-4 relative z-10">
                 <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonBlue/50 transition-colors duration-500 ease-out">
-                  {/* 🔴 NEXUS IMAGE FIXED HERE 🔴 */}
                   <img src={`${import.meta.env.BASE_URL}nexus.jpg`} alt="Nexus AI Dashboard" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
                   <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
                 </div>
@@ -202,7 +288,6 @@ export default function App() {
               </div>
               <div className="mt-auto px-4 pb-4 relative z-10">
                 <div className="relative overflow-hidden rounded-xl border border-white/10 group-hover:border-neonPurple/50 transition-colors duration-500 ease-out">
-                  {/* 🔴 AEROGEAR IMAGE FIXED HERE 🔴 */}
                   <img src={`${import.meta.env.BASE_URL}aerogear.jpg`} alt="AeroGear Storefront" className="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/50" />
                   <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60" />
                 </div>
@@ -279,17 +364,20 @@ export default function App() {
 
               <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
 
-              <button 
-                type="submit" 
-                disabled={!isHumanVerified}
-                className={`mt-4 px-8 py-4 font-bold rounded-lg transition-all duration-300 ease-out uppercase tracking-widest text-sm w-full md:w-auto self-end flex justify-center items-center gap-2 ${
-                  isHumanVerified 
-                  ? 'bg-neonPurple text-white hover:shadow-[0_0_20px_rgba(188,19,254,0.4)] hover:-translate-y-1' 
-                  : 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                }`}
-              >
-                {isHumanVerified ? "Transmit Payload" : "System Locked"}
-              </button>
+              {/* ADDED: Magnetic wrapper around the Submit Button */}
+              <MagneticElement className="w-full md:w-auto self-end mt-4">
+                <button 
+                  type="submit" 
+                  disabled={!isHumanVerified}
+                  className={`px-8 py-4 font-bold rounded-lg transition-all duration-300 ease-out uppercase tracking-widest text-sm w-full flex justify-center items-center gap-2 ${
+                    isHumanVerified 
+                    ? 'bg-neonPurple text-white hover:shadow-[0_0_20px_rgba(188,19,254,0.4)] hover:-translate-y-1' 
+                    : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {isHumanVerified ? "Transmit Payload" : "System Locked"}
+                </button>
+              </MagneticElement>
             </form>
           </GlassCard>
         </section>
