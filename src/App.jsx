@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import GlowyWavesHero from "./components/GlowyWavesHero";
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
 import { Code2, Cpu, Mail, Github, Linkedin, ChevronRight, ShieldCheck, Youtube, Instagram, User, Globe, Lock, Home, Briefcase } from 'lucide-react';
@@ -43,7 +43,7 @@ const TiltCard = ({ children, className = "" }) => {
   );
 };
 
-// --- 2. UPGRADED STANDARD GLASS BOX (Ultra-Smooth Hover Added) ---
+// --- 2. UPGRADED STANDARD GLASS BOX ---
 const GlassCard = ({ children, className = "" }) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
@@ -61,7 +61,7 @@ const GlassCard = ({ children, className = "" }) => (
 
 // 3. MAGNETIC UI WRAPPER
 const MagneticElement = ({ children, className = "" }) => {
-  const ref = React.useRef(null);
+  const ref = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const handleMouse = (e) => {
@@ -112,10 +112,8 @@ const FloatingHUD = () => {
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 1, duration: 0.8, type: "spring" }}
-      // Use full width flex centering instead of transform math for perfect alignment
       className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none"
     >
-      {/* Added responsive gaps (gap-4 on mobile, gap-8 on desktop) so it doesn't stretch off-screen */}
       <div className="flex items-center justify-center gap-4 md:gap-8 px-6 md:px-8 py-3 md:py-4 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_rgba(188,19,254,0.15)] pointer-events-auto w-max max-w-[95vw]">
         {[
           { icon: <Home size={20} />, label: "Core", link: "#" },
@@ -123,7 +121,6 @@ const FloatingHUD = () => {
           { icon: <Code2 size={20} />, label: "Database", link: "#projects" },
           { icon: <ShieldCheck size={20} />, label: "Comm", link: "#contact" },
         ].map((item, idx) => (
-          // Make sure the magnetic wrapper acts as a proper flex item
           <MagneticElement key={idx} className="flex justify-center items-center">
             <a 
               href={item.link}
@@ -143,6 +140,137 @@ const FloatingHUD = () => {
   );
 };
 
+// --- PHASE 2 UPGRADES: ATMOSPHERE & IMMERSION ---
+
+// 6. CIPHER TEXT REVEAL
+const CipherText = ({ text, className = "" }) => {
+  const [displayText, setDisplayText] = useState(text);
+  const [isHovered, setIsHovered] = useState(false);
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+
+  useEffect(() => {
+    if (!isHovered) return;
+    let iteration = 0;
+    const interval = setInterval(() => {
+      setDisplayText((prev) =>
+        text.split("").map((letter, index) => {
+          if (index < iteration) return text[index];
+          return letters[Math.floor(Math.random() * letters.length)];
+        }).join("")
+      );
+      if (iteration >= text.length) clearInterval(interval);
+      iteration += 1 / 3;
+    }, 30);
+    
+    return () => clearInterval(interval);
+  }, [isHovered, text]);
+
+  return (
+    <span 
+      className={`cursor-crosshair transition-colors duration-300 ${isHovered ? 'text-neonBlue drop-shadow-[0_0_8px_rgba(0,242,255,0.8)]' : ''} ${className}`} 
+      onMouseEnter={() => setIsHovered(true)} 
+      onMouseLeave={() => { setIsHovered(false); setDisplayText(text); }}
+    >
+      {displayText}
+    </span>
+  );
+};
+
+// 7. QUANTUM PARTICLE PHYSICS CANVAS
+const QuantumCanvas = () => {
+  const canvasRef = useRef(null);
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    let particles = [];
+    const mouse = { x: width / 2, y: height / 2 };
+
+    const handleMouseMove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
+    window.addEventListener('mousemove', handleMouseMove);
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 1;
+        this.vy = (Math.random() - 0.5) * 1;
+        this.radius = Math.random() * 2 + 1;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 242, 255, 0.5)';
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 70; i++) particles.push(new Particle());
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        
+        const dx = mouse.x - particles[i].x;
+        const dy = mouse.y - particles[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(188, 19, 254, ${1 - dist / 150})`;
+          ctx.lineWidth = 1;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.stroke();
+        }
+        
+        for (let j = i; j < particles.length; j++) {
+          const dx2 = particles[i].x - particles[j].x;
+          const dy2 = particles[i].y - particles[j].y;
+          const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+          if (dist2 < 100) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 242, 255, ${0.2 - dist2 / 500})`;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    };
+    animate();
+
+    const handleResize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-40" />;
+};
+
+
 // --- MAIN APP ---
 export default function App() {
   const [securityAnswer, setSecurityAnswer] = useState("");
@@ -158,12 +286,12 @@ export default function App() {
   return (
     <div className="bg-dark min-h-screen text-slate font-sans selection:bg-neonPurple selection:text-white relative overflow-x-hidden">
       
-      {/* ADDED: Scroll Line & HUD */}
       <ScrollProgress />
       <FloatingHUD />
+      <QuantumCanvas />
 
-      {/* HIGH-TECH GRID BACKGROUND */}
-      <div className="fixed inset-0 bg-tech-grid bg-[size:40px_40px] pointer-events-none z-0 opacity-50" />
+      {/* Grid opacity reduced so particles are more visible */}
+      <div className="fixed inset-0 bg-tech-grid bg-[size:40px_40px] pointer-events-none z-0 opacity-20" />
       
       <motion.div 
         animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
@@ -181,11 +309,13 @@ export default function App() {
         {/* --- HERO SECTION --- */}
         <GlowyWavesHero />
 
-        {/* --- 3D ABOUT ME SECTION --- Added id="identity" here for the HUD! */}
+        {/* --- 3D ABOUT ME SECTION --- */}
         <section id="identity" className="max-w-6xl mx-auto px-6 py-20">
           <div className="flex items-center gap-3 mb-10">
             <User className="text-neonPurple" size={28} />
-            <h2 className="text-3xl font-bold text-white uppercase tracking-widest">Identity Record</h2>
+            <h2 className="text-3xl font-bold text-white uppercase tracking-widest">
+              <CipherText text="Identity Record" />
+            </h2>
           </div>
 
           <TiltCard className="w-full">
@@ -215,7 +345,6 @@ export default function App() {
                     { icon: <Youtube size={20} />, link: "https://youtube.com/@ryzor.amv", label: "YouTube" },
                     { icon: <Instagram size={20} />, link: "https://instagram.com/snths.legacy", label: "Instagram" }
                   ].map((social, idx) => (
-                    // ADDED: Magnetic Wrapper around your social buttons!
                     <MagneticElement key={idx}>
                       <a 
                         href={social.link}
@@ -241,7 +370,9 @@ export default function App() {
             {/* Core Capabilities */}
             <GlassCard className="lg:col-span-2">
               <Code2 className="text-neonBlue mb-4" size={32} />
-              <h3 className="font-bold text-white mb-4 uppercase tracking-widest text-sm">Core Capabilities</h3>
+              <h3 className="font-bold text-white mb-4 uppercase tracking-widest text-sm">
+                 <CipherText text="Core Capabilities" />
+              </h3>
               <div className="flex flex-wrap gap-2 relative z-10">
                 {['React', 'Next.js', 'Tailwind CSS', 'Framer Motion', 'JavaScript', 'Firebase'].map(item => (
                   <span key={item} className="text-xs border border-neonBlue/20 bg-neonBlue/5 text-neonBlue hover:bg-neonBlue/20 hover:text-white transition-colors duration-300 px-3 py-1.5 rounded-md font-mono cursor-default">{item}</span>
@@ -304,7 +435,9 @@ export default function App() {
         <section id="contact" className="max-w-3xl mx-auto px-6 py-20">
           <div className="flex items-center justify-center gap-2 mb-8">
             <ShieldCheck className="text-neonBlue" size={24} />
-            <h2 className="text-2xl font-bold text-white uppercase tracking-widest">Initiate Project</h2>
+            <h2 className="text-2xl font-bold text-white uppercase tracking-widest">
+              <CipherText text="Initiate Project" />
+            </h2>
           </div>
           
           <GlassCard className="p-8 md:p-10 relative">
@@ -367,7 +500,6 @@ export default function App() {
 
               <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
 
-              {/* ADDED: Magnetic wrapper around the Submit Button */}
               <MagneticElement className="w-full md:w-auto self-end mt-4">
                 <button 
                   type="submit" 
