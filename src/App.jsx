@@ -100,7 +100,7 @@ const ScrollProgress = () => {
   );
 };
 
-// --- 5. FLOATING HUD (Transparent Background) ---
+// --- 5. FLOATING HUD ---
 const FloatingHUD = () => {
   return (
     <motion.div 
@@ -109,7 +109,6 @@ const FloatingHUD = () => {
       transition={{ delay: 1, duration: 0.8, type: "spring" }}
       className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none"
     >
-      {/* Changed to bg-transparent, removed borders and blur */}
       <div className="flex items-center justify-center gap-4 md:gap-8 px-6 md:px-8 py-3 md:py-4 rounded-full bg-transparent pointer-events-auto w-max max-w-[95vw]">
         {[
           { icon: <Home size={20} />, label: "Core", link: "#" },
@@ -192,7 +191,7 @@ const CipherText = ({ text, className = "" }) => {
   );
 };
 
-// --- 8. QUANTUM PARTICLE PHYSICS ---
+// --- 8. QUANTUM PARTICLE PHYSICS (Optimized) ---
 const QuantumCanvas = () => {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -230,7 +229,8 @@ const QuantumCanvas = () => {
       }
     }
 
-    for (let i = 0; i < 70; i++) particles.push(new Particle());
+    // Performance Fix: Reduced particle count from 70 to 30.
+    for (let i = 0; i < 30; i++) particles.push(new Particle());
 
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
@@ -271,7 +271,7 @@ const QuantumCanvas = () => {
     return () => { window.removeEventListener('mousemove', handleMouseMove); window.removeEventListener('resize', handleResize); };
   }, []);
 
-  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-40" />;
+  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-40 block" />;
 };
 
 // --- 9. DECLASSIFIED CLIENT DATABANKS ---
@@ -394,125 +394,133 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ filter: `hue-rotate(${themeHue}deg)`, transition: 'filter 1s ease-in-out' }} className="bg-dark min-h-screen text-slate font-sans selection:bg-neonPurple selection:text-white relative overflow-x-hidden">
-      
-      <ScrollProgress />
-      <FloatingHUD />
-      <ThemeSwitcher themeHue={themeHue} setThemeHue={setThemeHue} />
-      <QuantumCanvas />
+    <>
+      {/* 1. Remove native scrollbar globally */}
+      <style>{`
+        ::-webkit-scrollbar { display: none; }
+        html { scrollbar-width: none; -ms-overflow-style: none; }
+      `}</style>
 
-      <div className="fixed inset-0 bg-tech-grid bg-[size:40px_40px] pointer-events-none z-0 opacity-20" />
-      
-      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-neonBlue/10 blur-[150px] rounded-full pointer-events-none z-0" />
-      <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-neonPurple/10 blur-[150px] rounded-full pointer-events-none z-0" />
+      {/* 2. Added will-change-filter to optimize GPU rendering for the theme switcher */}
+      <div style={{ filter: `hue-rotate(${themeHue}deg)`, transition: 'filter 0.5s ease-out', willChange: 'filter' }} className="bg-dark min-h-screen text-slate font-sans selection:bg-neonPurple selection:text-white relative overflow-x-hidden">
+        
+        <ScrollProgress />
+        <FloatingHUD />
+        <ThemeSwitcher themeHue={themeHue} setThemeHue={setThemeHue} />
+        <QuantumCanvas />
 
-      <main className="relative z-10">
-        <GlowyWavesHero />
+        <div className="fixed inset-0 bg-tech-grid bg-[size:40px_40px] pointer-events-none z-0 opacity-20" />
+        
+        {/* 3. Added willChange to optimize the background orb animations */}
+        <motion.div style={{ willChange: "transform, opacity" }} animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-neonBlue/10 blur-[150px] rounded-full pointer-events-none z-0" />
+        <motion.div style={{ willChange: "transform, opacity" }} animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-neonPurple/10 blur-[150px] rounded-full pointer-events-none z-0" />
 
-        {/* --- IDENTITY SECTION --- */}
-        <section id="identity" className="max-w-6xl mx-auto px-6 py-20">
-          <div className="flex items-center gap-3 mb-10">
-            <User className="text-neonPurple" size={28} />
-            <h2 className="text-3xl font-bold text-white uppercase tracking-widest"><CipherText text="Identity Record" /></h2>
-          </div>
+        <main className="relative z-10">
+          <GlowyWavesHero />
 
-          <TiltCard className="w-full">
-            <div className="group bg-black/40 backdrop-blur-xl border border-white/10 hover:-translate-y-2 hover:border-neonBlue/50 hover:shadow-[0_15px_40px_rgba(0,242,255,0.15)] rounded-3xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row gap-10 items-center overflow-hidden transition-all duration-500 ease-out relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-neonBlue/10 via-transparent to-neonPurple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-              <div className="w-48 h-48 rounded-full border-2 border-neonPurple/50 p-2 shrink-0 relative z-10" style={{ transform: "translateZ(50px)" }}>
-                <div className="absolute inset-0 rounded-full border border-neonBlue animate-[spin_10s_linear_infinite]" />
-                <img 
-                  src={`${import.meta.env.BASE_URL}avatar.jpg`} 
-                  alt="Profile" 
-                  style={{ filter: `hue-rotate(${-themeHue}deg)` }} 
-                  className="w-full h-full rounded-full object-cover bg-white/5" 
-                />
-              </div>
-
-              <div style={{ transform: "translateZ(40px)" }} className="flex-1 text-center md:text-left z-10 relative">
-                <h3 className="text-4xl font-black text-white mb-2 tracking-tight">Website Developer <span className="text-neonBlue">&</span> Designer</h3>
-                <p className="text-neonPurple font-mono text-sm uppercase tracking-widest mb-6">Independent Freelancer</p>
-                <p className="text-slate leading-relaxed mb-8">I engineer immersive, high-performance digital experiences. Specializing in highly scalable architectures and ultra-modern UI/UX designs, I transform complex technical requirements into seamless, visually stunning interfaces. Whether it's a sleek landing page or a full-scale web application, I build for the future.</p>
-
-                <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                  {[
-                    { icon: <Mail size={20} />, link: "mailto:santhoshthamodharan2008@gmail.com", label: "Comm Link" },
-                    { icon: <Github size={20} />, link: "https://github.com/your-username", label: "GitHub" },
-                    { icon: <Linkedin size={20} />, link: "https://linkedin.com/in/your-username", label: "LinkedIn" },
-                    { icon: <Youtube size={20} />, link: "https://youtube.com/@ryzor.amv", label: "YouTube" },
-                    { icon: <Instagram size={20} />, link: "https://instagram.com/snths.legacy", label: "Instagram" }
-                  ].map((social, idx) => (
-                    <MagneticElement key={idx}>
-                      <a href={social.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white/5 hover:bg-neonBlue/10 hover:-translate-y-1 border border-white/5 hover:border-neonBlue/50 text-slate hover:text-neonBlue px-4 py-2 rounded-lg transition-all duration-300 ease-out font-mono text-xs uppercase relative z-20">
-                        {social.icon} {social.label}
-                      </a>
-                    </MagneticElement>
-                  ))}
-                </div>
-              </div>
+          {/* --- IDENTITY SECTION --- */}
+          <section id="identity" className="max-w-6xl mx-auto px-6 py-20">
+            <div className="flex items-center gap-3 mb-10">
+              <User className="text-neonPurple" size={28} />
+              <h2 className="text-3xl font-bold text-white uppercase tracking-widest"><CipherText text="Identity Record" /></h2>
             </div>
-          </TiltCard>
-        </section>
 
-        {/* --- PROJECTS SECTION --- */}
-        <section id="projects" className="max-w-6xl mx-auto px-6 py-20">
-          <div className="flex items-center gap-3 mb-10">
-            <Layers className="text-neonPurple" size={28} />
-            <h2 className="text-3xl font-bold text-white uppercase tracking-widest"><CipherText text="Systems & Arsenal" /></h2>
-          </div>
-          
-          {/* Skill Orbit has been removed as requested */}
+            <TiltCard className="w-full">
+              <div className="group bg-black/40 backdrop-blur-xl border border-white/10 hover:-translate-y-2 hover:border-neonBlue/50 hover:shadow-[0_15px_40px_rgba(0,242,255,0.15)] rounded-3xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row gap-10 items-center overflow-hidden transition-all duration-500 ease-out relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-neonBlue/10 via-transparent to-neonPurple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-          <DeclassifiedVault themeHue={themeHue} />
-        </section>
-
-        {/* --- CONTACT FORM --- */}
-        <section id="contact" className="max-w-3xl mx-auto px-6 py-20">
-          <div className="flex items-center justify-center gap-2 mb-8">
-            <ShieldCheck className="text-neonBlue" size={24} />
-            <h2 className="text-2xl font-bold text-white uppercase tracking-widest"><CipherText text="Initiate Project" /></h2>
-          </div>
-          
-          <GlassCard className="p-8 md:p-10 relative">
-            <form action="https://api.web3forms.com/submit" method="POST" className="flex flex-col gap-6 relative z-10">
-              <input type="hidden" name="access_key" value="a0e93df5-1a65-48e3-82c2-a7da166f70f1" />
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-2">
-                  <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Client Name</label>
-                  <input type="text" name="name" required maxLength="50" pattern="^[a-zA-Z\s]+$" title="Please enter a valid name (letters and spaces only)." className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" placeholder="Enter designator..." />
+                <div className="w-48 h-48 rounded-full border-2 border-neonPurple/50 p-2 shrink-0 relative z-10" style={{ transform: "translateZ(50px)" }}>
+                  <div className="absolute inset-0 rounded-full border border-neonBlue animate-[spin_10s_linear_infinite]" />
+                  <img 
+                    src={`${import.meta.env.BASE_URL}avatar.jpg`} 
+                    alt="Profile" 
+                    style={{ filter: `hue-rotate(${-themeHue}deg)` }} 
+                    className="w-full h-full rounded-full object-cover bg-white/5" 
+                  />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Comm Link (Email)</label>
-                  <input type="email" name="email" required maxLength="100" className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" placeholder="Enter address..." />
+
+                <div style={{ transform: "translateZ(40px)" }} className="flex-1 text-center md:text-left z-10 relative">
+                  <h3 className="text-4xl font-black text-white mb-2 tracking-tight">Website Developer <span className="text-neonBlue">&</span> Designer</h3>
+                  <p className="text-neonPurple font-mono text-sm uppercase tracking-widest mb-6">Independent Freelancer</p>
+                  <p className="text-slate leading-relaxed mb-8">I engineer immersive, high-performance digital experiences. Specializing in highly scalable architectures and ultra-modern UI/UX designs, I transform complex technical requirements into seamless, visually stunning interfaces. Whether it's a sleek landing page or a full-scale web application, I build for the future.</p>
+
+                  <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                    {[
+                      { icon: <Mail size={20} />, link: "mailto:santhoshthamodharan2008@gmail.com", label: "Comm Link" },
+                      { icon: <Github size={20} />, link: "https://github.com/your-username", label: "GitHub" },
+                      { icon: <Linkedin size={20} />, link: "https://linkedin.com/in/your-username", label: "LinkedIn" },
+                      { icon: <Youtube size={20} />, link: "https://youtube.com/@ryzor.amv", label: "YouTube" },
+                      { icon: <Instagram size={20} />, link: "https://instagram.com/snths.legacy", label: "Instagram" }
+                    ].map((social, idx) => (
+                      <MagneticElement key={idx}>
+                        <a href={social.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white/5 hover:bg-neonBlue/10 hover:-translate-y-1 border border-white/5 hover:border-neonBlue/50 text-slate hover:text-neonBlue px-4 py-2 rounded-lg transition-all duration-300 ease-out font-mono text-xs uppercase relative z-20">
+                          {social.icon} {social.label}
+                        </a>
+                      </MagneticElement>
+                    ))}
+                  </div>
                 </div>
               </div>
+            </TiltCard>
+          </section>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Transmission Data</label>
-                <textarea name="message" required maxLength="1000" rows="4" className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out resize-none font-mono text-sm" placeholder="Describe your freelance project..."></textarea>
-              </div>
+          {/* --- PROJECTS SECTION --- */}
+          <section id="projects" className="max-w-6xl mx-auto px-6 py-20">
+            <div className="flex items-center gap-3 mb-10">
+              <Layers className="text-neonPurple" size={28} />
+              <h2 className="text-3xl font-bold text-white uppercase tracking-widest"><CipherText text="Systems & Arsenal" /></h2>
+            </div>
+            
+            <DeclassifiedVault themeHue={themeHue} />
+          </section>
 
-              <div className="flex flex-col gap-2 border-t border-white/10 pt-6 mt-2">
-                <label className="text-neonPurple flex items-center gap-2 text-xs font-mono uppercase tracking-widest">
-                  <Lock size={14} /> Security Override: 2 + 3 = ?
-                </label>
-                <input type="text" value={securityAnswer} onChange={(e) => setSecurityAnswer(e.target.value)} className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonPurple/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm w-full md:w-1/2" placeholder="Enter verification code..." />
-              </div>
+          {/* --- CONTACT FORM --- */}
+          <section id="contact" className="max-w-3xl mx-auto px-6 py-20">
+            <div className="flex items-center justify-center gap-2 mb-8">
+              <ShieldCheck className="text-neonBlue" size={24} />
+              <h2 className="text-2xl font-bold text-white uppercase tracking-widest"><CipherText text="Initiate Project" /></h2>
+            </div>
+            
+            <GlassCard className="p-8 md:p-10 relative">
+              <form action="https://api.web3forms.com/submit" method="POST" className="flex flex-col gap-6 relative z-10">
+                <input type="hidden" name="access_key" value="a0e93df5-1a65-48e3-82c2-a7da166f70f1" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Client Name</label>
+                    <input type="text" name="name" required maxLength="50" pattern="^[a-zA-Z\s]+$" title="Please enter a valid name (letters and spaces only)." className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" placeholder="Enter designator..." />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Comm Link (Email)</label>
+                    <input type="email" name="email" required maxLength="100" className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm" placeholder="Enter address..." />
+                  </div>
+                </div>
 
-              <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
+                <div className="flex flex-col gap-2">
+                  <label className="text-neonBlue text-xs font-mono uppercase tracking-widest">Transmission Data</label>
+                  <textarea name="message" required maxLength="1000" rows="4" className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonBlue/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out resize-none font-mono text-sm" placeholder="Describe your freelance project..."></textarea>
+                </div>
 
-              <MagneticElement className="w-full md:w-auto self-end mt-4">
-                <button type="submit" disabled={!isHumanVerified} className={`px-8 py-4 font-bold rounded-lg transition-all duration-300 ease-out uppercase tracking-widest text-sm w-full flex justify-center items-center gap-2 ${isHumanVerified ? 'bg-neonPurple text-white hover:shadow-[0_0_20px_rgba(188,19,254,0.4)] hover:-translate-y-1' : 'bg-gray-800 text-gray-500 cursor-not-allowed'}`}>
-                  {isHumanVerified ? "Transmit Payload" : "System Locked"}
-                </button>
-              </MagneticElement>
-            </form>
-          </GlassCard>
-        </section>
+                <div className="flex flex-col gap-2 border-t border-white/10 pt-6 mt-2">
+                  <label className="text-neonPurple flex items-center gap-2 text-xs font-mono uppercase tracking-widest">
+                    <Lock size={14} /> Security Override: 2 + 3 = ?
+                  </label>
+                  <input type="text" value={securityAnswer} onChange={(e) => setSecurityAnswer(e.target.value)} className="bg-black/50 border border-white/10 rounded-lg p-4 text-white hover:border-neonPurple/40 hover:bg-black/70 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple transition-all duration-300 ease-out font-mono text-sm w-full md:w-1/2" placeholder="Enter verification code..." />
+                </div>
 
-      </main>
-    </div>
+                <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
+
+                <MagneticElement className="w-full md:w-auto self-end mt-4">
+                  <button type="submit" disabled={!isHumanVerified} className={`px-8 py-4 font-bold rounded-lg transition-all duration-300 ease-out uppercase tracking-widest text-sm w-full flex justify-center items-center gap-2 ${isHumanVerified ? 'bg-neonPurple text-white hover:shadow-[0_0_20px_rgba(188,19,254,0.4)] hover:-translate-y-1' : 'bg-gray-800 text-gray-500 cursor-not-allowed'}`}>
+                    {isHumanVerified ? "Transmit Payload" : "System Locked"}
+                  </button>
+                </MagneticElement>
+              </form>
+            </GlassCard>
+          </section>
+
+        </main>
+      </div>
+    </>
   );
 }
